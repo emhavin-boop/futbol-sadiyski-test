@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Футболни правила – Тест (2026)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+            color: #1c1c1e;
+            min-height: 100vh;
+            padding: 12px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+        h1, h2 { text-align: center; color: #007aff; }
+        h1 { font-size: 28px; margin-bottom: 16px; }
+        p.intro { text-align: center; font-size: 17px; margin-bottom: 24px; color: #555; }
+        .button {
+            display: block;
+            width: 100%;
+            max-width: 420px;
+            margin: 14px auto;
+            padding: 18px;
+            font-size: 19px;
+            font-weight: 600;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+        .button:hover { background: #0062cc; }
+        #timer {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff3b30;
+            margin: 16px 0;
+        }
+        .question-number { font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #333; }
+        .question { font-size: 17px; margin: 20px 0; line-height: 1.45; }
+        .option {
+            background: #f5f5f7;
+            border: 1px solid #d2d2d7;
+            border-radius: 10px;
+            padding: 16px;
+            margin: 10px 0;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+        .option:hover { background: #e8e8ed; }
+        .selected-correct   { background: #34c759 !important; color: white !important; }
+        .selected-wrong     { background: #ff3b30 !important; color: white !important; }
+        #next { margin-top: 20px; }
+        #score { font-size: 24px; font-weight: bold; text-align: center; margin: 24px 0; color: #007aff; }
+        .review-item { margin: 24px 0; padding: 16px; background: #f9f9fb; border-radius: 12px; }
+        .review-correct   { color: #34c759; font-weight: bold; }
+        .review-wrong     { color: #ff3b30; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .container { padding: 16px; border-radius: 0; box-shadow: none; }
+            h1 { font-size: 24px; }
+            .button { font-size: 18px; padding: 16px; }
+            .option { font-size: 15px; padding: 14px; }
+            .question { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="startScreen">
+    <h1>Добре дошли!</h1>
+    <p class="intro">Тест по футболни правила и съдийство<br>20 случайни въпроса без повторение</p>
+    <button class="button" onclick="startTest(0)">Без ограничение във времето</button>
+    <button class="button" onclick="startTest(15)">15 минути</button>
+    <button class="button" onclick="startTest(20)">20 минути</button>
+</div>
+
+<div class="container" id="quizScreen" style="display:none">
+    <div id="timer"></div>
+    <div class="question-number" id="qNumber"></div>
+    <div class="question" id="qText"></div>
+    <div id="options"></div>
+    <button class="button" id="nextBtn" style="display:none" onclick="nextQuestion()">Следващ въпрос</button>
+</div>
+
+<div class="container" id="resultScreen" style="display:none">
+    <h2>Резултат</h2>
+    <div id="score"></div>
+    <button class="button" onclick="showReview()">Преглед на отговорите</button>
+    <button class="button" onclick="restart()">Нов тест</button>
+</div>
+
+<div class="container" id="reviewScreen" style="display:none">
+    <h2>Преглед</h2>
+    <div id="reviewContent"></div>
+    <button class="button" onclick="backToResult()">Назад към резултата</button>
+</div>
+
+<script>
+const questions = [
+    { q: "Защитник изпълнява ПСУ и подава топката назад към своя вратар, намиращ се в своето НП. Вратарят се опитва да ритне топката, но се подхлъзва и не успява да я докосне, след което топката влиза във вратата му. Решение?", opts: ["Гол - НК", "Съдийска топка - НК", "Ъглов удар - НК", "Удар от вратата - НК", "ПСУ се повтаря - ЖК"], ans: 1 },
+    { q: "По време на игра вратар удря с юмрук съотборник в своето НП, недоволен от неговото представяне до момента. Какво трябва да отсъди съдията?", opts: ["НУ - ЧК", "НСУ - ЧК", "НУ - ЖК", "Съдийска топка - ЧК", "НУ - НК"], ans: 1 },
+    { q: "По време на игра, от своето НП, вратар наплюва свой съотборник, стоящ пред НП, недоволен от неговото представяне до момента. Какво трябва да отсъди съдията?", opts: ["НУ - НК", "ПСУ - ЧК", "НСУ - ЖК", "ПСУ - ЖК", "Съдийска топка - НК"], ans: 1 },
+    { q: "По време на игра вратар удря с юмрук свой съотборник, напуснал игралното поле секунди преди това. Какво трябва да отсъди съдията?", opts: ["НУ - ЧК", "НСУ - ЧК", "НСУ - ЖК", "ПСУ - ЖК", "Съдийска топка - ЧК"], ans: 1 },
+    { q: "Докато топката е в игра, състезател на отбор А удря с юмрук навлязъл на игралното поле фен на отбор В, като ситуацията се развива в НП на отбор А. Какво трябва да бъде решението?", opts: ["НУ - ЧК", "НСУ - ЧК", "Съдийска топка - ЖК", "ПСУ - ЖК", "Съдийска топка - ЧК"], ans: 4 },
+    { q: "Докато топката е в игра, състезател удря с юмрук навлязъл на игралното поле фен на неговия отбор, като ситуацията се развива в центъра на терена. Какво трябва да бъде решението?", opts: ["НУ - ЧК", "НСУ - НК", "НСУ - ЖК", "ПСУ - ЧК", "Съдийска топка - ЧК"], ans: 4 },
+    { q: "При спряна игра съдията инструктира №8 да напусне игралното поле, за да свали пръстена си. №8 излиза, след което се връща по време на игра на терена без разрешение на съдията... Как трябва да се процедира?", opts: ["НСУ - ЖК на №8", "НСУ - 2 ЖК и ЧК на №8", "ПСУ - 2 ЖК и ЧК на №8", "Съдийска топка - НК", "ПСУ - ЧК на №8"], ans: 2 },
+    { q: "При изпълнение на НУ вратарят скъсява дистанцията... но топката се удря в гредата и след това изпълнителят я вкарва директно във вратата. Какво трябва да реши съдията?", opts: ["Повторение на НУ - ЖК", "НСУ - НК", "ПСУ - НК", "Гол - НК", "Съдийска топка - ЖК"], ans: 1 },
+    { q: "При бързо изпълнение на удар от вратата, преди топката да е напуснала НП, играч на противниковия отбор се намира вътре... Какви действия трябва да предприеме съдийският екип?", opts: ["Повторение на удара - ЖК", "НСУ - ЖК", "НК - Играта продължава", "Съдийска топка - НК", "Устно предупреждение - НК"], ans: 2 },
+    { q: "Състезател изпълнява странично хвърляне правилно, топката удря съдията и напуска терена... Решение?", opts: ["Повторение... - НК", "НСУ - ЖК", "Странично хвърляне за противниковия отбор - НК", "Повторение... - ЧК", "Съд топка - ЖК"], ans: 2 },
+    { q: "Състезател изпълнява правилно странично хвърляне. Той хвърля топката директно към неговия вратар... топката влиза във вратата. Какво решение?", opts: ["Ъглов удар - НК", "НСУ - ЖК", "Гол - ЖК", "Гол - НК", "ПСУ - ЧК"], ans: 3 },
+    { q: "Състезател, различен от вратаря, умишлено играе с ръка в НП... ако голът е отбелязан редовно?", opts: ["Гол - ЖК", "Гол - НК", "НУ - ЖК", "НУ - ЧК", "Устно предупреждение - НК"], ans: 0 },
+    { q: "Играч, различен от вратаря... се опитва да докосне топката с ръка... ако това е неуспешно?", opts: ["НУ - ЖК", "НСУ - НК", "Играта продължава - НК", "Играта продължава - ЧК", "Устно предупреждение - НК"], ans: 2 },
+    { q: "Състезател... изпълнява странично хвърляне и подава топката директно на противник... преднамерено докосва с ръка...", opts: ["НСУ - НК", "НСУ - ЖК", "ПСУ - ЖК", "ПСУ - ЧК", "Съдийска топка - НК"], ans: 3 },
+    { q: "Резервен състезател на отбор А влиза без разрешение и безразсъдно блъска противник...", opts: ["НСУ - 2 ЖК и ЧК", "Съдийска топка - 2 ЖК и ЧК", "ПСУ - 2 ЖК и ЧК", "ПСУ - ЧК", "НСУ - ЧК"], ans: 2 },
+    { q: "Резервен състезател влиза без разрешение и спира обещаваща атака с ръка...", opts: ["НСУ - 2 ЖК и ЧК", "Съдийска топка - 2 ЖК и ЧК", "ПСУ - 2 ЖК и ЧК", "НСУ - ЖК", "НСУ - ЧК"], ans: 2 },
+    { q: "Състезател моли да напусне полето... докато напуска топката идва до него и той вкарва гол.", opts: ["Гол - НК", "НСУ - 2 ЖК", "ПСУ - ЖК", "НСУ - ЖК", "Гол - Устно предупреждение"], ans: 3 },
+    { q: "При НУ изпълнителят се подхлъзва, рита с един крак, докосва с втория и вкарва гол.", opts: ["Гол - НК", "НСУ - НК", "Повторение на НУ - НК", "НСУ - ЖК", "Повторение на НУ - ЖК"], ans: 2 },
+    { q: "При НУ... рикошира в другия крак и бива избита в ъглов удар от вратар в коректна позиция.", opts: ["Ъглов удар - НК", "НСУ - НК", "Повторение на НУ - ЖК", "НСУ - ЖК", "Устно предупреждение - НК"], ans: 1 },
+    { q: "При НУ в 1-ва минута... рикошира и бива избита в ъглов удар от вратар, излязъл 1 м напред.", opts: ["Ъглов удар - НК", "НСУ - ЖК", "Повторение на НУ - ЖК", "НСУ - НК", "Устно предупреждение - НК"], ans: 3 },
+    { q: "АС сигнализира насилие, съдията не вижда, отборът вкарва гол. Сега съдията вижда сигнала.", opts: ["Гол - ЧК", "Съдийска топка - НК", "НСУ - ЖК", "ПСУ - ЖК", "ПСУ - ЧК"], ans: 4 },
+    { q: "Състезател се връща без разрешение и спира обещаваща атака (изритва топката без нарушение).", opts: ["НСУ - ЖК", "Съдийска топка - ЖК", "ПСУ - 2 ЖК и ЧК", "ПСУ - ЧК", "Съдийска топка - ЧК"], ans: 2 },
+    { q: "№2 задържа фланелката извън НП (спира ОГ), после №3 прави нарушение в НП (ОГ).", opts: ["НУ - ЖК на №3", "НУ - ЖК на №2 и №3", "НУ - ЖК на №2 и ЧК на №3", "ПСУ - НК", "ПСУ - ЖК на №3"], ans: 0 },
+    { q: "Треньор навлиза в зоната на противника и се опитва да удари треньора му.", opts: ["НСУ - ЧК", "Съдийска топка - ЧК", "Устно предупреждение - НК", "ПСУ - ЧК", "Съдийска топка - ЖК"], ans: 1 },
+    { q: "Съдийска топка на вратаря... съотборник заиграва, без вратарят да я е докоснал.", opts: ["НСУ - ЖК", "Играта продължава - НК", "Повторение - НК", "Повторение - ЖК", "НСУ - ЖК"], ans: 1 },
+    { q: "Вратар напуска НП с топката в ръце, преди да се освободи от нея.", opts: ["НСУ - ЖК", "Съдийска топка - НК", "ПСУ - ЖК", "ПСУ - НК", "НСУ - НК"], ans: 3 },
+    { q: "Състезател грабва топката от треньора на противника и го блъска с прекомерна сила.", opts: ["Странично хвърляне - ЖК на двамата", "Странично хвърляне - ЧК на двамата", "... ЖК треньор ЧК играч", "ПСУ - ЧК на двамата", "Устно предупреждение - НК"], ans: 1 },
+    { q: "Резервен влиза и изритва топката преди да влезе във вратата му.", opts: ["НСУ - ЖК и ЧК", "ПСУ - ЖК и ЧК", "НУ - 2 ЖК и ЧК", "НУ - ЧК", "НУ - ЖК"], ans: 3 },
+    { q: "Играч с ЖК от първото полувреме, сменен, после оспорва АС вербално.", opts: ["НСУ - Втори ЖК и ЧК", "Съдийска топка - Втори ЖК и ЧК", "ПСУ - Втори ЖК и ЧК", "НСУ - ЖК", "ПСУ - ЧК"], ans: 0 },
+    { q: "Вратар пада, случайно блъска противник, изпуска топката → гол.", opts: ["НСУ - НК", "Съдийска топка - НК", "ПСУ - НК", "Гол - НК", "НСУ - ЖК"], ans: 3 },
+    { q: "Атакуващ умишлено и скрито играе с ръка, за да организира атака.", opts: ["НСУ - ЖК", "Съдийска топка - НК", "Устно предупреждение - НК", "ПСУ - ЖК", "ПСУ - ЧК"], ans: 3 },
+    { q: "Странично хвърляне към вратар, той неуспешно рита, случайно докосва с ръка в НП.", opts: ["НСУ - ЧК", "Съдийска топка - НК", "НСУ - ЖК", "Играта продължава - НК", "НСУ - НК"], ans: 3 },
+    { q: "Вратар хваща ъглов удар, после умишлено блъска с ръце в главата на противник.", opts: ["НСУ - ЖК", "Съдийска топка - НК", "Играта продължава - НК", "НУ - ЧК на вратаря", "НУ - ЖК на вратаря"], ans: 3 },
+    { q: "Нападател инцидентно докосва с ръка (естествено положение) и вкарва гол.", opts: ["НСУ - НК", "ПСУ - НК", "Съдийска топка - НК", "Гол - НК", "ПСУ - ЖК"], ans: 1 },
+    { q: "Резервен хвърля бутилка с прекомерна сила по противник (избягва).", opts: ["НСУ - ЖК", "Съдийска топка - НК", "ПСУ - НК", "ПСУ - ЖК", "ПСУ - ЧК"], ans: 4 },
+    { q: "Защитник фаулира безразсъдно, после умишлено изритва топката в тялото на падналия.", opts: ["НСУ - ЖК", "Съдийска топка - ЧК", "ПСУ - ЖК и ЧК", "ПСУ - ЖК", "ПСУ - ЧК"], ans: 4 },
+    { q: "При дузпи след продължения – умишлено спира преди удар (има ЖК).", opts: ["НУ се повтаря - НК", "Ударът се смята за пропуснат - ЖК и ЧК", "Ударът се повтаря - ЖК", "Устно предупреждение - НК", "Ударът се смята за пропуснат - ЖК"], ans: 4 },
+    { q: "Състезател извън терена – треньор го удря в лицето.", opts: ["НСУ - ЧК на треньора", "Съдийска топка - ЧК на треньора", "Устно предупреждение - НК", "ПСУ - ЧК на треньора", "НСУ - ЖК на треньора"], ans: 1 },
+    { q: "Играч с ЖК от 1во полувреме, безразсъдно нарушение + явно недоволство.", opts: ["ЧК", "Втори ЖК и ЧК – Третия ЖК не се отчита"], ans: 1 }
+];
+
+let current = [];
+let answers = [];
+let idx = 0;
+let timeLeft = 0;
+let timerId = null;
+
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function startTest(minutes) {
+    timeLeft = minutes * 60;
+    current = shuffle([...questions]).slice(0, 20);
+    answers = new Array(20).fill(-1);
+    idx = 0;
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('quizScreen').style.display = 'block';
+    if (timeLeft > 0) {
+        timerId = setInterval(updateTimer, 1000);
+        updateTimer();
+    }
+    showQuestion();
+}
+
+function updateTimer() {
+    timeLeft--;
+    let m = Math.floor(timeLeft / 60);
+    let s = timeLeft % 60;
+    document.getElementById('timer').innerText = `Оставащо време: ${m}:${s.toString().padStart(2,'0')}`;
+    if (timeLeft <= 0) {
+        clearInterval(timerId);
+        finish();
+    }
+}
+
+function showQuestion() {
+    document.getElementById('qNumber').innerText = `Въпрос ${idx+1} / 20`;
+    document.getElementById('qText').innerText = current[idx].q;
+    let html = '';
+    current[idx].opts.forEach((opt, i) => {
+        html += `<div class="option" onclick="select(${i})">${opt}</div>`;
+    });
+    document.getElementById('options').innerHTML = html;
+    document.getElementById('nextBtn').style.display = 'none';
+}
+
+function select(i) {
+    answers[idx] = i;
+    let opts = document.querySelectorAll('.option');
+    opts.forEach((el, j) => {
+        el.onclick = null;
+        if (j === current[idx].ans) el.classList.add('selected-correct');
+        if (j === i && i !== current[idx].ans) el.classList.add('selected-wrong');
+    });
+    document.getElementById('nextBtn').style.display = 'block';
+}
+
+function nextQuestion() {
+    idx++;
+    if (idx < 20) showQuestion();
+    else finish();
+}
+
+function finish() {
+    if (timerId) clearInterval(timerId);
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+
+    let correct = 0;
+    answers.forEach((a, i) => { if (a === current[i].ans) correct++; });
+    let pct = (correct / 20 * 100).toFixed(1);
+    document.getElementById('score').innerHTML = `${correct} от 20 верни<br>Успеваемост: ${pct}%`;
+}
+
+function showReview() {
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('reviewScreen').style.display = 'block';
+    let html = '';
+    current.forEach((q, i) => {
+        let user = answers[i];
+        let status = (user === q.ans) ? 'review-correct' : 'review-wrong';
+        html += `<div class="review-item">
+            <strong>Въпрос ${i+1}</strong><br>
+            ${q.q}<br><br>`;
+        q.opts.forEach((opt, j) => {
+            let cls = (j === q.ans) ? 'review-correct' : (j === user ? 'review-wrong' : '');
+            html += `<div class="${cls}">${opt}</div>`;
+        });
+        html += '</div>';
+    });
+    document.getElementById('reviewContent').innerHTML = html;
+}
+
+function backToResult() {
+    document.getElementById('reviewScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+}
+
+function restart() {
+    document.getElementById('reviewScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('startScreen').style.display = 'block';
+    document.getElementById('timer').innerText = '';
+}
+</script>
+</body>
+</html>
