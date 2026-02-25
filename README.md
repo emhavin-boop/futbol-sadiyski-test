@@ -10,7 +10,7 @@
 ## Как да ползваш теста
 
 1. Отиди на:  
-   https://emhavin-boop.github.io/futbol-sadiyski-test/quiz.html  
+   [https://emhavin-boop.github.io/futbol-sadiyski-test/quiz.html](https://emhavin-boop.github.io/futbol-sadiyski-test/quiz.html)  
    (ако Pages не е включен – виж по-долу)
 
 2. Или свали файла quiz.html и го отвори в браузър (работи офлайн)
