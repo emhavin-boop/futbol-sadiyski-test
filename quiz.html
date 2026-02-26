@@ -183,7 +183,7 @@ function showQ() {
         html += `<div class="option" data-idx="${i}">${opt}</div>`;
     });
     document.getElementById('opts').innerHTML = html;
-    document.getElementById('next').style.display = 'none';
+    document.getElementById('btnNext').style.display = 'none';
 }
 
 function pick(idx) {
@@ -193,7 +193,7 @@ function pick(idx) {
         if (i === currentQs[curIdx].ans) el.classList.add('selected-correct');
         if (i === idx && idx !== currentQs[curIdx].ans) el.classList.add('selected-wrong');
     });
-    document.getElementById('next').style.display = 'block';
+    document.getElementById('btnNext').style.display = 'block';
 }
 
 function nextQ() {
@@ -244,29 +244,39 @@ function restart() {
     document.getElementById('timer').innerText = '';
 }
 
-// Свързване на всички бутони и делегирано събитие за опциите
+// ВСИЧКИ слушатели – само след като DOM е готов
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('btnNoLimit').addEventListener('click', () => startTest(0));
-    document.getElementById('btn15').addEventListener('click', () => startTest(15));
-    document.getElementById('btn20').addEventListener('click', () => startTest(20));
+    // Проверяваме дали елементите съществуват, за да няма грешки
+    const btnNoLimit = document.getElementById('btnNoLimit');
+    const btn15 = document.getElementById('btn15');
+    const btn20 = document.getElementById('btn20');
+    const btnNext = document.getElementById('btnNext');
+    const btnReview = document.getElementById('btnReview');
+    const btnRestart = document.getElementById('btnRestart');
+    const btnBack = document.getElementById('btnBack');
 
-    document.getElementById('next').addEventListener('click', nextQ);
-    document.getElementById('btnReview').addEventListener('click', showReview);
-    document.getElementById('btnRestart').addEventListener('click', restart);
-    document.getElementById('btnBack').addEventListener('click', back);
+    if (btnNoLimit) btnNoLimit.addEventListener('click', () => startTest(0));
+    if (btn15) btn15.addEventListener('click', () => startTest(15));
+    if (btn20) btn20.addEventListener('click', () => startTest(20));
+    if (btnNext) btnNext.addEventListener('click', nextQ);
+    if (btnReview) btnReview.addEventListener('click', showReview);
+    if (btnRestart) btnRestart.addEventListener('click', restart);
+    if (btnBack) btnBack.addEventListener('click', back);
 
-    // Делегирано събитие за клик на опции (работи на iOS)
-    document.getElementById('opts').addEventListener('click', function(e) {
-        const option = e.target.closest('.option');
-        if (option) {
-            const idx = parseInt(option.dataset.idx);
-            if (!isNaN(idx)) pick(idx);
-        }
-    });
+    // Делегирано събитие за опциите (работи на iOS)
+    const optsContainer = document.getElementById('opts');
+    if (optsContainer) {
+        optsContainer.addEventListener('click', function(e) {
+            const option = e.target.closest('.option');
+            if (option) {
+                const idx = parseInt(option.dataset.idx);
+                if (!isNaN(idx)) pick(idx);
+            }
+        });
+    }
 });
 </script>
-</body>
-</html>
+
 
 
 
