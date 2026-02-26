@@ -175,16 +175,18 @@ function updateTimer() {
     if (timeLeft <= 0) finishTest();
 }
 
-function showQ() {
-    document.getElementById('qnum').innerText = `Въпрос ${curIdx + 1} от 20`;
-    document.getElementById('qtext').innerText = currentQs[curIdx].q;
-    let html = '';
-    currentQs[curIdx].opts.forEach((opt, i) => {
-        html += `<div class="option" onclick="pick(${i})">${opt}</div>`;
+document.addEventListener('DOMContentLoaded', function() {
+    // ... твоите текущи слушатели за бутоните ...
+
+    // Делегирано събитие за опциите (работи на iOS)
+    document.getElementById('opts').addEventListener('click', function(e) {
+        const option = e.target.closest('.option');
+        if (option) {
+            const idx = parseInt(option.dataset.idx);
+            if (!isNaN(idx)) pick(idx);
+        }
     });
-    document.getElementById('opts').innerHTML = html;
-    document.getElementById('next').style.display = 'none';
-}
+});
 
 function pick(idx) {
     userAns[curIdx] = idx;
@@ -243,5 +245,6 @@ function restart() {
 </script>
 </body>
 </html>
+
 
 
