@@ -238,8 +238,35 @@ document.getElementById("score").innerHTML=
 }
 
 function showReview(){
-document.getElementById("result").style.display="none";
-document.getElementById("review").style.display="block";
+    document.getElementById("result").style.display="none";
+    document.getElementById("review").style.display="block";
+
+    let html="";
+
+    currentQs.forEach((q,i)=>{
+
+        html+=`<p><strong>Въпрос ${i+1}:</strong> ${q.q}</p>`;
+
+        q.opts.forEach((o,j)=>{
+
+            let cls="option";
+
+            if(j===q.ans){
+                cls+=" correct";
+            }
+
+            if(j===userAns[i] && j!==q.ans){
+                cls+=" wrong";
+            }
+
+            html+=`<div class="${cls}">${o}</div>`;
+        });
+
+        html+="<hr>";
+    });
+
+    document.getElementById("reviewContent").innerHTML=html;
+}
 
 let html="";
 currentQs.forEach((q,i)=>{
@@ -289,6 +316,7 @@ selectAnswer(parseInt(opt.dataset.i));
 
 </body>
 </html>
+
 
 
 
