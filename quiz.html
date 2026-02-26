@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Футболен Съдийски Тест 2026</title>
 
-    <!-- PWA / manifest настройки -->
+    <!-- PWA настройки -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0A2A5E">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -81,7 +81,7 @@
     <div id="qnum"></div>
     <div id="qtext" class="question"></div>
     <div id="opts"></div>
-    <button class="button" id="next" style="display:none">Следващ</button>
+    <button class="button" id="btnNext" style="display:none">Следващ</button>
 </div>
 
 <div class="container" id="result" style="display:none">
@@ -139,7 +139,7 @@ const questions = [
     { q: "При изпълнение на удари за определяне на краен победител (УОКП) след продълженията състезател, завършил засилването си, умишлено спира преди да нанесе удара по топката, за да извлече предимство пред вратаря, след което вкарва топката във вратата. Същият състезател вече е получил ЖК за друго нарушение по време на продълженията. Решение?", opts: ["НУ се повтаря - НК", "Ударът се смята за пропуснат - ЖК и ЧК на изпълнителя на НУ", "Ударът се повтаря - ЖК", "Уснтно предупреждение - НК", "Ударът се смята за пропуснат - ЖК"], ans: 4 },
     { q: "Състезател е инструктиран от съдията да напусне игралното поле за да оправи екипировката си. Докато той се намира извън терена, неговият треньор започва да му се кара и го удря в лицето. Съдията спира играта за да вземе необходимите мерки. Решение?", opts: ["НСУ - ЧК на треньора", "Съдийска топка - ЧК на треньора", "Устно предупреждение - НК", "ПСУ - ЧК на треньора", "НСУ - ЖК на треньора"], ans: 1 },
     { q: "Състезател е предупреден (ЖК) през първото полувреме за неспортсменско поведение. През второто полувреме същият състезател извършва безразсъдно нарушение в централната зона на терена. Съдията спира играта и отсъжда ПСУ, но играчът нарушител изразява явно недоволство от решението на съдията. Какви дисциплинарни мерки трябва да предприеме съдията?", opts: ["ЧК", "Втори ЖК и ЧК - Третия ЖК не се отчита", "Втори ЖК и ЧК - Доклад за третия ЖК", "Устно предупреждение вместо трети ЖК", "Още два ЖК и тогава ЧК"], ans: 2 },
-    { q: "Състезател (Отбор А) изпълнявайки странично хвърляне хвърля топката в противниковото НП. Топката се движи директно към вратата и състезател на противниковия отбор Б, който не е вратар, хваща топката с ръце във вратарското поле, предотвратявайки влизането и във вратата. Решение?", opts: ["НУ - ЧК", "Съдийска топка - НК", "НУ - НК", "НУ - ЖК", "НСУ - ЧК"], ans: 3 },
+    { q: "Състезател (Отбор А) изпълнявайки странично хвърляне хвърля топката в противниковото НП. Топката се движи директно към вратата и състезател на противниковия отбор Б, който не е вратар, хваща топката с ръце във вратарското поле, предотвратявайки влизането и във вратата. Решение?", opts: ["НУ - ЧК", "Съдийска топка - НК", "НУ - НК", "НУ - ЖК", "НСУ - ЧК"], ans: 3 }
 ];
 
 let currentQs = [];
@@ -187,7 +187,7 @@ function showQ() {
     });
     document.getElementById('opts').innerHTML = html;
 
-    // Добавяме клик събития към опциите
+    // Свързване на клик към опциите
     document.querySelectorAll('.option').forEach(opt => {
         opt.addEventListener('click', function() {
             const idx = parseInt(this.dataset.idx);
@@ -195,7 +195,7 @@ function showQ() {
         });
     });
 
-    document.getElementById('next').style.display = 'none';
+    document.getElementById('btnNext').style.display = 'none';
 }
 
 function pick(idx) {
@@ -206,7 +206,7 @@ function pick(idx) {
         if (i === currentQs[curIdx].ans) el.classList.add('selected-correct');
         if (i === idx && idx !== currentQs[curIdx].ans) el.classList.add('selected-wrong');
     });
-    document.getElementById('next').style.display = 'block';
+    document.getElementById('btnNext').style.display = 'block';
 }
 
 function nextQ() {
@@ -257,13 +257,13 @@ function restart() {
     document.getElementById('timer').innerText = '';
 }
 
-// Свързване на бутоните от началния екран
+// Свързване на бутоните
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('btnNoLimit').addEventListener('click', function() { startTest(0); });
     document.getElementById('btn15').addEventListener('click', function() { startTest(15); });
     document.getElementById('btn20').addEventListener('click', function() { startTest(20); });
 
-    document.getElementById('next').addEventListener('click', nextQ);
+    document.getElementById('btnNext').addEventListener('click', nextQ);
     document.getElementById('btnReview').addEventListener('click', showReview);
     document.getElementById('btnRestart').addEventListener('click', restart);
     document.getElementById('btnBack').addEventListener('click', back);
@@ -271,5 +271,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
-
-
