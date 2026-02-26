@@ -1,102 +1,102 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Футболен Съдийски Тест 2026</title>
-    
-    <!-- PWA / manifest настройки -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0A2A5E">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
-            color: #1c1c1e;
-            margin: 0;
-            padding: 12px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 920px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-        }
-        h1, h2 { text-align: center; color: #0A2A5E; }
-        .button {
-            display: block;
-            width: 100%;
-            max-width: 420px;
-            margin: 14px auto;
-            padding: 18px;
-            font-size: 19px;
-            font-weight: 600;
-            background: #0A2A5E;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-        }
-        .button:hover { background: #08204a; }
-        #timer { text-align: center; font-size: 18px; color: #d32f2f; margin: 16px 0; font-weight: bold; }
-        .question { font-size: 17px; margin: 20px 0; line-height: 1.5; }
-        .option {
-            background: #f5f5f7;
-            border: 1px solid #d2d2d7;
-            border-radius: 10px;
-            padding: 16px;
-            margin: 10px 0;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .option.selected-correct   { background: #4caf50; color: white; }
-        .option.selected-wrong     { background: #f44336; color: white; }
-        #score { font-size: 24px; text-align: center; color: #0A2A5E; margin: 24px 0; }
-        @media (max-width: 600px) {
-            .container { padding: 16px; }
-            .button { font-size: 18px; padding: 16px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Футболен Съдийски Тест 2026</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A2A5E">
+
+<style>
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(to bottom,#f0f4f8,#d9e2ec);
+    margin:0;
+    padding:12px;
+}
+.container{
+    max-width:920px;
+    margin:auto;
+    background:#fff;
+    padding:24px;
+    border-radius:16px;
+    box-shadow:0 8px 32px rgba(0,0,0,.08);
+}
+h1,h2{text-align:center;color:#0A2A5E}
+.button{
+    display:block;
+    width:100%;
+    max-width:420px;
+    margin:14px auto;
+    padding:16px;
+    font-size:18px;
+    font-weight:600;
+    background:#0A2A5E;
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+}
+.button:hover{background:#08204a}
+#timer{
+    text-align:center;
+    font-size:18px;
+    color:#d32f2f;
+    margin:16px 0;
+    font-weight:bold;
+}
+.question{font-size:17px;margin:20px 0}
+.option{
+    background:#f5f5f7;
+    border:1px solid #d2d2d7;
+    border-radius:10px;
+    padding:14px;
+    margin:8px 0;
+    cursor:pointer;
+}
+.option.correct{background:#4caf50;color:#fff}
+.option.wrong{background:#f44336;color:#fff}
+</style>
 </head>
+
 <body>
 
 <div class="container" id="start">
-    <h1>Добре дошли!</h1>
-    <p style="text-align:center;">Тест по футболни правила и съдийство<br>20 случайни въпроса без повторение</p>
-    <button class="button" onclick="startTest(0)">Без лимит</button>
-    <button class="button" onclick="startTest(15)">15 минути</button>
-    <button class="button" onclick="startTest(20)">20 минути</button>
+<h1>Добре дошли!</h1>
+<p style="text-align:center">
+Тест по футболни правила и съдийство<br>
+20 случайни въпроса без повторение
+</p>
+<button class="button" id="btnNoLimit">Без лимит</button>
+<button class="button" id="btn15">15 минути</button>
+<button class="button" id="btn20">20 минути</button>
 </div>
 
 <div class="container" id="quiz" style="display:none">
-    <div id="timer"></div>
-    <div id="qnum"></div>
-    <div id="qtext" class="question"></div>
-    <div id="opts"></div>
-    <button class="button" id="next" style="display:none" onclick="nextQ()">Следващ</button>
+<div id="timer"></div>
+<div id="qnum"></div>
+<div id="qtext" class="question"></div>
+<div id="opts"></div>
+<button class="button" id="btnNext" style="display:none">Следващ</button>
 </div>
 
 <div class="container" id="result" style="display:none">
-    <h2>Резултат</h2>
-    <div id="score"></div>
-    <button class="button" onclick="showReview()">Преглед</button>
-    <button class="button" onclick="restart()">Нов тест</button>
+<h2>Резултат</h2>
+<div id="score"></div>
+<button class="button" id="btnReview">Преглед</button>
+<button class="button" id="btnRestart">Нов тест</button>
 </div>
 
 <div class="container" id="review" style="display:none">
-    <h2>Преглед на отговорите</h2>
-    <div id="reviewContent"></div>
-    <button class="button" onclick="back()">Назад</button>
+<h2>Преглед</h2>
+<div id="reviewContent"></div>
+<button class="button" id="btnBack">Назад</button>
 </div>
 
 <script>
 const questions = [
-    { q: "Защитник изпълнява ПСУ и подава топката назад към своя вратар, намиращ се в своето НП. Вратарят се опитва да ритне топката, но се подхлъзва и не успява да я докосне, след което топката влиза във вратата му. Решение?", opts: ["Гол - НК", "Съдийска топка - НК", "Ъглов удар - НК", "Удар от вратата - НК", "ПСУ се повтаря - ЖК"], ans: 1 },
+{ q: "Защитник изпълнява ПСУ и подава топката назад към своя вратар, намиращ се в своето НП. Вратарят се опитва да ритне топката, но се подхлъзва и не успява да я докосне, след което топката влиза във вратата му. Решение?", opts: ["Гол - НК", "Съдийска топка - НК", "Ъглов удар - НК", "Удар от вратата - НК", "ПСУ се повтаря - ЖК"], ans: 1 },
     { q: "По време на игра вратар удря с юмрук съотборник в своето НП, недоволен от неговото представяне до момента. Какво трябва да отсъди съдията?", opts: ["НУ - ЧК", "НСУ - ЧК", "НУ - ЖК", "Съдийска топка - ЧК", "НУ - НК"], ans: 1 },
     { q: "По време на игра, от своето НП, вратар наплюва свой съотборник, стоящ пред НП, недоволен от неговото представяне до момента. Какво трябва да отсъди съдията?", opts: ["НУ - НК", "ПСУ - ЧК", "НСУ - ЖК", "ПСУ - ЖК", "Съдийска топка - НК"], ans: 1 },
     { q: "По време на игра вратар удря с юмрук свой съотборник, напуснал игралното поле секунди преди това. Какво трябва да отсъди съдията?", opts: ["НУ - ЧК", "НСУ - ЧК", "НСУ - ЖК", "ПСУ - ЖК", "Съдийска топка - ЧК"], ans: 1 },
@@ -139,143 +139,156 @@ const questions = [
     { q: "Състезател (Отбор А) изпълнявайки странично хвърляне хвърля топката в противниковото НП. Топката се движи директно към вратата и състезател на противниковия отбор Б, който не е вратар, хваща топката с ръце във вратарското поле, предотвратявайки влизането и във вратата. Решение?", opts: ["НУ - ЧК", "Съдийска топка - НК", "НУ - НК", "НУ - ЖК", "НСУ - ЧК"], ans: 3 }
 ];
 
-let currentQs = [];
-let userAns = [];
-let curIdx = 0;
-let timeLeft = 0;
-let timer = null;
+let currentQs=[];
+let userAns=[];
+let cur=0;
+let timeLeft=0;
+let timer=null;
 
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
+function shuffle(arr){
+for(let i=arr.length-1;i>0;i--){
+let j=Math.floor(Math.random()*(i+1));
+[arr[i],arr[j]]=[arr[j],arr[i]];
+}
+return arr;
 }
 
-function startTest(mins) {
-    timeLeft = mins * 60;
-    currentQs = shuffle([...questions]).slice(0, 20);
-    userAns = new Array(20).fill(-1);
-    curIdx = 0;
-    document.getElementById('start').style.display = 'none';
-    document.getElementById('quiz').style.display = 'block';
-    if (timeLeft > 0) {
-        timer = setInterval(updateTimer, 1000);
-        updateTimer();
-    }
-    showQ();
+function startTest(mins){
+timeLeft=mins*60;
+currentQs=shuffle([...questions]).slice(0,20);
+userAns=new Array(20).fill(-1);
+cur=0;
+
+document.getElementById("start").style.display="none";
+document.getElementById("quiz").style.display="block";
+document.getElementById("result").style.display="none";
+document.getElementById("review").style.display="none";
+
+if(timer){clearInterval(timer);timer=null;}
+
+if(timeLeft>0){
+updateTimer();
+timer=setInterval(updateTimer,1000);
+}else{
+document.getElementById("timer").innerText="";
 }
 
-function updateTimer() {
-    timeLeft--;
-    let m = Math.floor(timeLeft / 60);
-    let s = timeLeft % 60;
-    document.getElementById('timer').innerText = `Оставащо време: ${m}:${s.toString().padStart(2,'0')}`;
-    if (timeLeft <= 0) finishTest();
+showQ();
 }
 
-function showQ() {
-    document.getElementById('qnum').innerText = `Въпрос ${curIdx + 1} от 20`;
-    document.getElementById('qtext').innerText = currentQs[curIdx].q;
-    let html = '';
-    currentQs[curIdx].opts.forEach((opt, i) => {
-        html += `<div class="option" data-idx="${i}">${opt}</div>`;
-    });
-    document.getElementById('opts').innerHTML = html;
-    document.getElementById('btnNext').style.display = 'none';
+function updateTimer(){
+if(timeLeft<=0){
+finishTest();
+return;
+}
+let m=Math.floor(timeLeft/60);
+let s=timeLeft%60;
+document.getElementById("timer").innerText=
+`Оставащо време: ${m}:${s.toString().padStart(2,"0")}`;
+timeLeft--;
 }
 
-function pick(idx) {
-    userAns[curIdx] = idx;
-    let opts = document.querySelectorAll('.option');
-    opts.forEach((el, i) => {
-        if (i === currentQs[curIdx].ans) el.classList.add('selected-correct');
-        if (i === idx && idx !== currentQs[curIdx].ans) el.classList.add('selected-wrong');
-    });
-    document.getElementById('btnNext').style.display = 'block';
+function showQ(){
+document.getElementById("qnum").innerText=
+`Въпрос ${cur+1} от 20`;
+document.getElementById("qtext").innerText=currentQs[cur].q;
+
+let html="";
+currentQs[cur].opts.forEach((o,i)=>{
+html+=`<div class="option" data-i="${i}">${o}</div>`;
+});
+document.getElementById("opts").innerHTML=html;
+document.getElementById("btnNext").style.display="none";
 }
 
-function nextQ() {
-    if (userAns[curIdx] === -1) {
-        alert("Моля, избери отговор преди да продължиш!");
-        return;
-    }
-    curIdx++;
-    if (curIdx < 20) showQ();
-    else finishTest();
+function selectAnswer(i){
+if(userAns[cur]!==-1)return;
+userAns[cur]=i;
+
+document.querySelectorAll(".option").forEach((el,idx)=>{
+if(idx===currentQs[cur].ans)el.classList.add("correct");
+if(idx===i && i!==currentQs[cur].ans)el.classList.add("wrong");
+});
+document.getElementById("btnNext").style.display="block";
 }
 
-function finishTest() {
-    if (timer) clearInterval(timer);
-    document.getElementById('quiz').style.display = 'none';
-    document.getElementById('result').style.display = 'block';
-    let correct = 0;
-    userAns.forEach((a, i) => { if (a === currentQs[i].ans) correct++; });
-    let pct = ((correct / 20) * 100).toFixed(1);
-    document.getElementById('score').innerHTML = `${correct} от 20 верни<br>Успеваемост: ${pct}%`;
+function nextQ(){
+if(userAns[cur]===-1){
+alert("Моля избери отговор!");
+return;
+}
+cur++;
+if(cur<20)showQ();
+else finishTest();
 }
 
-function showReview() {
-    document.getElementById('result').style.display = 'none';
-    document.getElementById('review').style.display = 'block';
-    let html = '';
-    currentQs.forEach((q, i) => {
-        let u = userAns[i];
-        html += `<p><strong>Въпрос ${i+1}:</strong> ${q.q}</p>`;
-        q.opts.forEach((o, j) => {
-            let cls = (j === q.ans) ? 'selected-correct' : (j === u ? 'selected-wrong' : '');
-            html += `<p class="${cls}">${o}</p>`;
-        });
-        html += '<hr>';
-    });
-    document.getElementById('reviewContent').innerHTML = html;
+function finishTest(){
+if(timer){clearInterval(timer);timer=null;}
+document.getElementById("quiz").style.display="none";
+document.getElementById("result").style.display="block";
+
+let correct=0;
+userAns.forEach((a,i)=>{
+if(a===currentQs[i].ans)correct++;
+});
+let pct=((correct/20)*100).toFixed(1);
+
+document.getElementById("score").innerHTML=
+`${correct} от 20 верни<br>Успеваемост: ${pct}%`;
 }
 
-function back() {
-    document.getElementById('review').style.display = 'none';
-    document.getElementById('result').style.display = 'block';
+function showReview(){
+document.getElementById("result").style.display="none";
+document.getElementById("review").style.display="block";
+
+let html="";
+currentQs.forEach((q,i)=>{
+html+=`<p><strong>Въпрос ${i+1}:</strong> ${q.q}</p>`;
+q.opts.forEach((o,j)=>{
+let cls="";
+if(j===q.ans)cls="correct";
+else if(j===userAns[i])cls="wrong";
+html+=`<p class="${cls}">${o}</p>`;
+});
+html+="<hr>";
+});
+document.getElementById("reviewContent").innerHTML=html;
 }
 
-function restart() {
-    document.getElementById('review').style.display = 'none';
-    document.getElementById('result').style.display = 'none';
-    document.getElementById('start').style.display = 'block';
-    document.getElementById('timer').innerText = '';
+function restart(){
+if(timer){clearInterval(timer);timer=null;}
+document.getElementById("start").style.display="block";
+document.getElementById("quiz").style.display="none";
+document.getElementById("result").style.display="none";
+document.getElementById("review").style.display="none";
+document.getElementById("timer").innerText="";
 }
 
-// ВСИЧКИ слушатели – само след като DOM е готов
-document.addEventListener('DOMContentLoaded', function() {
-    // Проверяваме дали елементите съществуват, за да няма грешки
-    const btnNoLimit = document.getElementById('btnNoLimit');
-    const btn15 = document.getElementById('btn15');
-    const btn20 = document.getElementById('btn20');
-    const btnNext = document.getElementById('btnNext');
-    const btnReview = document.getElementById('btnReview');
-    const btnRestart = document.getElementById('btnRestart');
-    const btnBack = document.getElementById('btnBack');
+document.addEventListener("DOMContentLoaded",function(){
 
-    if (btnNoLimit) btnNoLimit.addEventListener('click', () => startTest(0));
-    if (btn15) btn15.addEventListener('click', () => startTest(15));
-    if (btn20) btn20.addEventListener('click', () => startTest(20));
-    if (btnNext) btnNext.addEventListener('click', nextQ);
-    if (btnReview) btnReview.addEventListener('click', showReview);
-    if (btnRestart) btnRestart.addEventListener('click', restart);
-    if (btnBack) btnBack.addEventListener('click', back);
+document.getElementById("btnNoLimit").addEventListener("click",()=>startTest(0));
+document.getElementById("btn15").addEventListener("click",()=>startTest(15));
+document.getElementById("btn20").addEventListener("click",()=>startTest(20));
+document.getElementById("btnNext").addEventListener("click",nextQ);
+document.getElementById("btnReview").addEventListener("click",showReview);
+document.getElementById("btnRestart").addEventListener("click",restart);
+document.getElementById("btnBack").addEventListener("click",()=>{
+document.getElementById("review").style.display="none";
+document.getElementById("result").style.display="block";
+});
 
-    // Делегирано събитие за опциите (работи на iOS)
-    const optsContainer = document.getElementById('opts');
-    if (optsContainer) {
-        optsContainer.addEventListener('click', function(e) {
-            const option = e.target.closest('.option');
-            if (option) {
-                const idx = parseInt(option.dataset.idx);
-                if (!isNaN(idx)) pick(idx);
-            }
-        });
-    }
+document.getElementById("opts").addEventListener("click",function(e){
+const opt=e.target.closest(".option");
+if(opt){
+selectAnswer(parseInt(opt.dataset.i));
+}
+});
+
 });
 </script>
+
+</body>
+</html>
 
 
 
